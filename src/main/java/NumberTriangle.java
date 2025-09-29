@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -88,7 +89,7 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
+
         return -1;
     }
 
@@ -109,21 +110,50 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
-
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
         NumberTriangle top = null;
+        int CurrRowLength = 1;
+        ArrayList<NumberTriangle> PrevRow = new ArrayList<NumberTriangle>();
 
         String line = br.readLine();
         while (line != null) {
 
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            ArrayList<NumberTriangle> CurrRow = new ArrayList<NumberTriangle>();
 
-            // TODO process the line
+            // Turn line into integer array 'nums'
+            String[] parts = line.split(" ");
+            ArrayList<Integer> nums = new ArrayList<Integer>();
+            for (String num : parts) {
+                nums.add(Integer.parseInt(num));
+            }
 
+            // Begin the NumberTriangle
+            if (CurrRowLength == 1) {
+                top = new NumberTriangle(nums.get(0));
+                CurrRow.add(top);
+            }
+
+            // Continue the NumberTriangle
+            else {
+                for (int i = 0; i < CurrRowLength; i++) {
+                    NumberTriangle CurrLeaf = new NumberTriangle(nums.get(i));
+                    // Add index as right leaf
+                    if (i > 0) {
+                        PrevRow.get(i-1).setRight(CurrLeaf);
+                    }
+                    // Add index as left leaf
+                    if (i < CurrRowLength - 1) {
+                        PrevRow.get(i).setLeft(CurrLeaf);
+                    }
+                    // Update the current row
+                    CurrRow.add(CurrLeaf);
+                }
+            }
+
+            // Update CurrRowLength and PrevRow
+            CurrRowLength++;
+            PrevRow = CurrRow;
             //read the next line
             line = br.readLine();
         }
